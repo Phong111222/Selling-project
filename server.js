@@ -1,5 +1,4 @@
 const express = require('express');
-// require('dotenv').config();
 const connectDB = require('./database/connectDB');
 const ErrorMiddleware = require('./middlewares/errorMiddleware');
 const RoleRouter = require('./routes/role/route');
