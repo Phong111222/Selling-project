@@ -24,4 +24,11 @@ RoleSchema.static('deleteRoleByID', function (id) {
   return this.deleteOne({ _id: id });
 });
 
+RoleSchema.static('updateRoleByID', function (id, role_name, role_desc) {
+  return this.updateOne(
+    { _id: id },
+    { $set: { role_name: role_name, role_desc: role_desc } }
+  );
+});
+
 module.exports = mongoose.model('roles', RoleSchema);

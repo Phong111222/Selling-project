@@ -4,24 +4,15 @@ const ErrorMiddleware = require('./middlewares/errorMiddleware');
 const RoleRouter = require('./routes/role/route');
 const CategoryRouter = require('./routes/category/route');
 const UserRouter = require('./routes/user/route');
-const auth = require('./routes/api/auth');
+const auth = require('./routes/auth/auth');
 require('colors');
-const { checkHeader } = require('./middlewares/userMiddleware');
 
-// const jwt = require('jsonwebtoken');
-// const token = jwt.sign(
-//   { name: 'Phong', email: 'tienphong@gmail.com' },
-//   process.env.JWT_SECRET,
-//   { expiresIn: '2h' }
-// );
-// const decode = jwt.verify(token, process.env.JWT_SECRET);
-// console.log(decode);
-//Connect to MongoDB
 connectDB();
 
 const app = express();
 app.use(express.json());
-app.use(checkHeader);
+// app.use(authMiddleware);
+
 app.use('/api/v1/auth', auth);
 app.use('/api/v1/role', RoleRouter);
 app.use('/api/v1/category', CategoryRouter);

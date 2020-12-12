@@ -1,7 +1,7 @@
 const express = require('express');
 const ErrorResponse = require('../../models/response/error');
 const User = require('../../models/User');
-
+const SuccessResponse = require('../../models/response/success');
 const route = express.Router();
 
 route.patch('/Change-password', async (req, res) => {
@@ -18,7 +18,7 @@ route.patch('/Change-password', async (req, res) => {
     if (!(await User.checkPass(new_password, check_user.password))) {
       const hashPass = await User.hashPass(new_password);
       const rs = await User.updatePassword(email, hashPass);
-      res.status(200).json(rs);
+      res.status(200).json(new SuccessResponse(200, rs));
     } else {
       throw new ErrorResponse(400, 'new password is the same ass old password');
     }

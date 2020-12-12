@@ -1,34 +1,46 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const UserSchema = new mongoose.Schema({
-  name: {
-    required: true,
-    type: String,
-  },
-  email: {
-    type: String,
-    validate: {
-      validator: function (email) {
-        return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-          email
-        );
+const UserSchema = new mongoose.Schema(
+  {
+    name: {
+      required: true,
+      type: String,
+      minlength: [6, 'name must have at least 6 characters'],
+    },
+    email: {
+      required: true,
+      type: String,
+      validate: {
+        validator: function (email) {
+          return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+            email
+          );
+        },
+        message: 'invalid Email',
       },
-      message: 'invalid Email',
+    },
+    password: {
+      required: true,
+      type: String,
+      minlength: [6, 'password must have more than 6 characters'],
+    },
+    isActive: {
+      default: true,
+      type: Boolean,
+    },
+
+    role: {
+      type: Number,
+      default: 0,
     },
   },
-  password: {
-    required: true,
-    type: String,
-    minlength: [6, 'password must have more than 6 characters'],
-  },
-  isActive: {
-    default: false,
-    type: Boolean,
-  },
-  timestamp: {
-    type: Date,
-    default: Date.now(),
-  },
+  { timestamps: true }
+);
+
+UserSchema.pre('save', async function () {
+  const salt = await bcrypt.genSalt();
+  const hashPass = await bcrypt.hash(this.password, salt);
+  this.password = hashPass;
 });
 
 UserSchema.static('findUserByEmail', function (email) {
