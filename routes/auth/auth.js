@@ -10,15 +10,19 @@ route.post(
   '/register',
   asyncMiddleware(async (req, res, next) => {
     const { name, email, password } = req.body;
-    const check_user = await User.findUserByEmail(email);
-    if (check_user) {
-      next(new ErrorResponse(400, `email was existed`));
-    } else {
-      const hashPass = await User.hashPass(password);
-      const user = new User({ name, email, password: hashPass });
-      const rs = await user.save();
-      res.status(200).json(new SuccessResponse(200, rs));
-    }
+    // const check_user = await User.findUserByEmail(email);
+    // if (check_user) {
+    //   next(new ErrorResponse(400, `email was existed`));
+    // } else {
+    //   const hashPass = await User.hashPass(password);
+    //   const user = new User({ name, email, password: hashPass });
+    //   const rs = await user.save();
+    //   res.status(200).json(new SuccessResponse(200, rs));
+    // }
+    const hashPass = await User.hashPass(password);
+    const user = new User({ name, email, password: hashPass });
+    const rs = await user.save();
+    res.status(200).json(new SuccessResponse(200, rs));
   })
 );
 

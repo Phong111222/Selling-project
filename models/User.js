@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+
 const UserSchema = new mongoose.Schema(
   {
     name: {
@@ -18,6 +19,7 @@ const UserSchema = new mongoose.Schema(
         },
         message: 'invalid Email',
       },
+      unique: true, // the same as primary key in SQL
     },
     password: {
       required: true,
