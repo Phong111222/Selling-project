@@ -1,35 +1,50 @@
+// sku, name, price, quantity, description, image, category
 const mongoose = require('mongoose');
 
-const imageSchema = mongoose.Schema({
-  name: String,
-  img: {
-    data: Buffer,
-    contentType: 'img/png',
+const { Schema } = mongoose;
+
+const productSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: [true, 'name is required'],
+    },
+    price: {
+      type: Number,
+      required: [true, 'price is required'],
+    },
+    quantity: {
+      type: Number,
+      required: [true, 'quantity is required'],
+    },
+    description: {
+      type: String,
+      required: [true, 'description is required'],
+    },
+    image: {
+      type: String,
+    },
+    category: {
+      type: String,
+    },
+    sku: {
+      type: String,
+      required: [true, 'sku is required'],
+      unique: true,
+    },
   },
+  {
+    toJSON: {
+      virtuals: true,
+    },
+    timestamps: true,
+  }
+);
+productSchema.virtual('category_detail', {
+  ref: 'Category',
+  localField: 'category',
+  foreignField: 'name',
+  justOne: true,
 });
 
-const ProductSchema = new mongoose.Schema({
-  name: {
-    required: true,
-    type: String,
-  },
-  price: {
-    required: true,
-    type: String,
-  },
-  amount: {
-    required: true,
-    type: Number,
-  },
-  categories: {
-    required: true,
-    type: [String],
-  },
-  description: {
-    required: true,
-    type: String,
-  },
-  image: {},
-});
-
-module.exports = mongoose.model('products', ProductSchema);
+module.exports = mongoose.model('Product', productSchema);

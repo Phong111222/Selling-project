@@ -1,20 +1,20 @@
 const mongoose = require('mongoose');
 
-const RoleSchema = new mongoose.Schema({
-  role_id: {
-    required: true,
-    type: Number,
+const RoleSchema = new mongoose.Schema(
+  {
+    role_name: {
+      required: true,
+      unique: true,
+      type: String,
+    },
+    role_desc: {
+      required: true,
+      type: String,
+      minlength: [10, 'role_desc must have more than 10 characters'],
+    },
   },
-  role_name: {
-    required: true,
-    type: String,
-  },
-  role_desc: {
-    required: true,
-    type: String,
-    minlength: [10, 'role_desc must have more than 10 characters'],
-  },
-});
+  { timestamps: true }
+);
 
 RoleSchema.static('getAllRoles', function () {
   return this.find();

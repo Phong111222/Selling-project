@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
+mongoose.set('runValidators', true);
+
 const UserSchema = new mongoose.Schema(
   {
     name: {
@@ -32,17 +34,47 @@ const UserSchema = new mongoose.Schema(
     },
 
     role: {
-      type: Number,
-      default: 0,
+      type: String,
+      default: 'guest',
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+    },
+  }
 );
+/**
+ * (
+ *  $lookup:{
+ *    from:"",
+ *    localField:"",
+ *    foreignField:"",
+ *    at:"",
+ *  }
+ * )
+ */
 
-UserSchema.pre('save', async function () {
+UserSchema.virtual('role_detail', {
+  ref: 'roles', // from
+  localField: 'role',
+  foreignField: 'role_name',
+  justOne: true,
+});
+
+UserSchema.pre('save', async function (next) {
   const salt = await bcrypt.genSalt();
   const hashPass = await bcrypt.hash(this.password, salt);
   this.password = hashPass;
+  next();
+});
+
+UserSchema.pre('findOneAndUpdate', async function () {
+  const salt = await bcrypt.genSalt();
+  const hashPass = await bcrypt.hash(this._update.password, salt);
+
+  this._update.password = hashPass;
 });
 
 UserSchema.static('findUserByEmail', function (email) {

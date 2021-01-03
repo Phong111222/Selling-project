@@ -1,14 +1,26 @@
 const mongoose = require('mongoose');
 
-const connectionString = 'mongodb://localhost:27017/Selling-project';
-module.exports = () => {
-  if (!mongoose.connection.readyState) {
-    mongoose
-      .connect(connectionString, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      })
-      .then(() => console.log('DB Connected'.yellow))
-      .catch((err) => console.log(err.message));
+class ConnectMongo {
+  constructor() {
+    this.gfs = null;
   }
-};
+  static getConnect() {
+    mongoose.connect(process.env.URI, {
+      useCreateIndex: true,
+      useNewUrlParser: true,
+      useFindAndModify: true,
+      useUnifiedTopology: true,
+    });
+    // khoi tao bucket ngay luc ket noi mongodb
+    const connect = mongoose.connection;
+
+    connect.once('open', () => {
+      console.log('DB is connected');
+      this.gfs = new mongoose.mongo.GridFSBucket(connect.db, {
+        bucketName: process.env.MONGO_BUCKET,
+      });
+    });
+  }
+}
+
+module.exports = ConnectMongo;

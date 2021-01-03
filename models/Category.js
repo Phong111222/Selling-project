@@ -1,19 +1,21 @@
 const mongoose = require('mongoose');
 
-const CategorySchema = new mongoose.Schema({
-  category_id: {
-    require: true,
-    type: String,
+const CategorySchema = new mongoose.Schema(
+  {
+    category_desc: {
+      required: true,
+      type: String,
+    },
+    category_name: {
+      required: true,
+      type: String,
+      unique: true,
+    },
   },
-  category_desc: {
-    required: true,
-    type: String,
-  },
-  category_name: {
-    required: true,
-    type: String,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 CategorySchema.static('getAllCategories', function () {
   return this.find();
